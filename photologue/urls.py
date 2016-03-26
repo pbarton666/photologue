@@ -89,3 +89,4 @@ urlpatterns = [
         PhotoMonthArchiveOldView.as_view(),
         name='pl-photo-archive-month')
 ]
+x=1

@@ -129,8 +129,11 @@ class UploadZipForm(forms.Form):
             if not len(data):
                 logger.debug('File "{0}" is empty.'.format(filename))
                 continue
-
-            photo_title_root = self.cleaned_data['title'] if self.cleaned_data['title'] else gallery.title
+            
+            ###changed by Pat to accept file name as starting point
+            #photo_title_root = self.cleaned_data['title'] if self.cleaned_data['title'] else gallery.title
+            photo_title_root=filename
+            
 
             # A photo might already exist with the same slug. So it's somewhat inefficient,
             # but we loop until we find a slug that's available.
@@ -179,3 +182,4 @@ class UploadZipForm(forms.Form):
                              _('The photos have been added to gallery "{0}".').format(
                                  gallery.title),
                              fail_silently=True)
+            x=1

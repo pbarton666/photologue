@@ -181,10 +181,11 @@ class Gallery(models.Model):
                              max_length=250,
                              unique=True)
     slug = models.SlugField(_('title slug'),
-                            unique=True,
                             max_length=250,
+                            unique=True,                           
                             help_text=_('A "slug" is a unique URL-friendly title for an object.'))
-    description = models.TextField(_('description'),
+    description = models.CharField(_('description'),
+                                   max_length=250,
                                    blank=True)
     is_public = models.BooleanField(_('is public'),
                                     default=True,
@@ -528,7 +529,8 @@ class Photo(ImageModel):
                             unique=True,
                             max_length=250,
                             help_text=_('A "slug" is a unique URL-friendly title for an object.'))
-    caption = models.TextField(_('caption'),
+    caption = models.CharField(_('caption'),
+                               max_length=250,
                                blank=True)
     date_added = models.DateTimeField(_('date added'),
                                       default=now)
@@ -539,19 +541,27 @@ class Photo(ImageModel):
                                    blank=True)
 
     objects = PhotoQuerySet.as_manager()
+    
+    species=models.CharField(_('species'),blank=True, max_length=100)
+    source=models.URLField(_('source'),blank=True,max_length=150)
+    authority=models.CharField(_('authority'),blank=True,max_length=100)
+    is_validated = models.BooleanField(_('validated'),
+                                    default=False,
+                                    )    
 
     class Meta:
-        ordering = ['-date_added']
+        #ordering = ['-date_added']
+        ordering=['species']
         get_latest_by = 'date_added'
-        verbose_name = _("photo")
-        verbose_name_plural = _("photos")
+        verbose_name = _("snake")
+        verbose_name_plural = _("snakes")
 
     def __str__(self):
         return self.title
 
     def save(self, *args, **kwargs):
         if self.slug is None:
-            self.slug = slugify(self.title)
+            self.slug = slugify(self.species)
         super(Photo, self).save(*args, **kwargs)
 
     def get_absolute_url(self):

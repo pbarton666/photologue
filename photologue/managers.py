@@ -16,6 +16,8 @@ class SharedQueries(object):
 
 
 class GalleryQuerySet(SharedQueries, QuerySet):
+    #def __init__():
+        #pass
     pass
 
 

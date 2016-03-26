@@ -56,7 +56,13 @@ class PhotoListView(ListView):
 
 
 class PhotoDetailView(DetailView):
-    queryset = Photo.objects.on_site().is_public()
+    #queryset = Photo.objects.on_site().is_public()
+    keepers=('title', 'caption', 'is_public', 'species', 'source', 'authority', 'is_validated', 'slug')
+    queryset = Photo.objects.only(keepers).on_site().is_public()
+    a=1
+    
+    
+    
 
 
 class PhotoDateView(object):
@@ -66,6 +72,7 @@ class PhotoDateView(object):
 
 
 class PhotoDateDetailView(PhotoDateView, DateDetailView):
+    #print('PhotoDateDetailView')
     pass
 
 

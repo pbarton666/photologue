@@ -33,6 +33,7 @@ class GalleryAdmin(admin.ModelAdmin):
         list_filter.append('sites')
     date_hierarchy = 'date_added'
     prepopulated_fields = {'slug': ('title',)}
+    #prepopulated_fields = {'slug': ('title',)}
     form = GalleryAdminForm
     if MULTISITE:
         filter_horizontal = ['sites']
@@ -136,16 +137,24 @@ class PhotoAdminForm(forms.ModelForm):
 
     class Meta:
         model = Photo
+
         if MULTISITE:
             exclude = []
         else:
-            exclude = ['sites']
+            fields= ('species', 'authority', 'is_validated', 'source', 'image', 'title', 'slug')
+            exclude = ['sites', 'caption', 'date_added', 'is_public', 'crop_from', 'effect','caption']
 
 
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ('title', 'date_taken', 'date_added',
-                    'is_public', 'view_count', 'admin_thumbnail')
-    list_filter = ['date_added', 'is_public']
+    #list_display = ('title', 'date_taken', 'date_added',
+                    #'is_public', 'view_count', 'admin_thumbnail')
+    #list_filter = ['date_added', 'is_public']
+    
+    list_display = ('title', 'species', 'admin_thumbnail', 'authority', 'source', 'date_added',
+                    'is_validated', 'view_count', )
+    list_filter = [ 'is_validated', 'species','date_added']    
+    
+    
     if MULTISITE:
         list_filter.append('sites')
     search_fields = ['title', 'slug', 'caption']
