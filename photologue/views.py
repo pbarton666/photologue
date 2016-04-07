@@ -58,7 +58,9 @@ class PhotoListView(ListView):
 class PhotoDetailView(DetailView):
     #queryset = Photo.objects.on_site().is_public()
     keepers=('title', 'caption', 'is_public', 'species', 'source', 'authority', 'is_validated', 'slug')
-    queryset = Photo.objects.only(keepers).on_site().is_public()
+    queryset = Photo.objects.only('title', 'caption', 'is_public', 
+                                  'species', 'source', 'authority', 
+                                  'is_validated', 'slug').on_site().is_public()
     a=1
     
     

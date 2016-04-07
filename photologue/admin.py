@@ -142,30 +142,79 @@ class PhotoAdminForm(forms.ModelForm):
             exclude = []
         else:
             fields= ('species', 'authority', 'is_validated', 'source', 'image', 'title', 'slug')
-            exclude = ['sites', 'caption', 'date_added', 'is_public', 'crop_from', 'effect','caption']
+            #fields= ('species', 'authority', 'is_validated', 'source', 'image', 'title', 'slug', 'admin_orig_image_tag','admin_thumbnail',)
+            #readonly_fields=('admin_orig_image_tag,)
+            exclude = ['sites', 'caption', 'date_added', 'is_public', 
+                       'crop_from', 'effect','caption']
 
 
 class PhotoAdmin(admin.ModelAdmin):
-    #list_display = ('title', 'date_taken', 'date_added',
-                    #'is_public', 'view_count', 'admin_thumbnail')
-    #list_filter = ['date_added', 'is_public']
-    
+  
+    #these are settings for the main list display
     list_display = ('title', 'species', 'admin_thumbnail', 'authority', 'source', 'date_added',
-                    'is_validated', 'view_count', )
-    list_filter = [ 'is_validated', 'species','date_added']    
+                    'is_validated', 'admin_orig_image_tag' )
+    list_filter = [ 'is_validated', 'species','date_added']  
+    
+    
+    #prepopulated_fields = {'slug': ('title',)}
+
+    readonly_fields = ('date_taken',)  
+    
+    fields=['image', 'title','species', 'source', 'authority', 'is_validated']
+    #exclude=['slug']
+
     
     
     if MULTISITE:
         list_filter.append('sites')
     search_fields = ['title', 'slug', 'caption']
     list_per_page = 10
-    prepopulated_fields = {'slug': ('title',)}
-    readonly_fields = ('date_taken',)
-    form = PhotoAdminForm
+    
     if MULTISITE:
         filter_horizontal = ['sites']
     if MULTISITE:
-        actions = ['add_photos_to_current_site', 'remove_photos_from_current_site']
+        actions = ['add_photos_to_current_site', 'remove_photos_from_current_site']    
+
+    #form = PhotoAdminForm
+    ##TODO:  find way to unbork this hard-coded path
+    change_form_template=['/home/pat/workspace/photologue/photologue/templates/admin/photologue/photo/change_form.html',]
+                          
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        to_return=self.changeform_view(request, object_id, form_url, extra_context)
+        return self.changeform_view(request, object_id, form_url, extra_context)                          
+                         
+    def get_fields(self, request, obj=None):
+        if self.fields:
+            return self.fields
+        form = self.get_form(request, obj, fields=None)
+        to_return=list(form.base_fields) + list(self.get_readonly_fields(request, obj))
+        return list(form.base_fields) + list(self.get_readonly_fields(request, obj))
+
+    def get_fieldsets(self, request, obj=None):
+        """
+        Hook for specifying fieldsets.
+        """
+        #to_display=['image', 'title','species', 'source', 'authority', 'is_validated']
+        #self.fields = to_display
+        if self.fieldsets:
+            return self.fieldsets
+        to_return=[(None, {'fields': self.get_fields(request, obj)})]
+        #to_return=[(None, {'fields':to_display})]        
+        return to_return
+        
+        #return [(None, {'fields': self.get_fields(request, obj)})]
+    
+    def get_inline_formsets(self, request, formsets, inline_instances,
+                            obj=None):
+        inline_admin_formsets = []
+        for inline, formset in zip(inline_instances, formsets):
+            fieldsets = list(inline.get_fieldsets(request, obj))
+            readonly = list(inline.get_readonly_fields(request, obj))
+            prepopulated = dict(inline.get_prepopulated_fields(request, obj))
+            inline_admin_formset = helpers.InlineAdminFormSet(inline, formset,
+                                                              fieldsets, prepopulated, readonly, model_admin=self)
+            inline_admin_formsets.append(inline_admin_formset)
+        return inline_admin_formsets    
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         """ Set the current site as initial value. """
@@ -207,8 +256,31 @@ class PhotoAdmin(admin.ModelAdmin):
                 name='photologue_upload_zip')
         ]
         return custom_urls + urls
-
+    
     def upload_zip(self, request):
+
+        context = {
+            'title': _('Upload a zip archive of photos'),
+            'app_label': self.model._meta.app_label,
+            'opts': self.model._meta,
+            'has_change_permission': self.has_change_permission(request)
+        }
+
+        # Handle form request
+        if request.method == 'POST':
+            form = UploadZipForm(request.POST, request.FILES)
+            if form.is_valid():
+                form.save(request=request)
+                return HttpResponseRedirect('..')
+        else:
+            form = UploadZipForm()
+        context['form'] = form
+        context['adminform'] = helpers.AdminForm(form,
+                                                 list([(None, {'fields': form.base_fields})]),
+                                                 {})
+        return render(request, 'admin/photologue/photo/upload_zip.html', context)    
+
+    def deprecated_upload_zip(self, request):
 
         context = {
             'title': _('Upload a zip archive of photos'),

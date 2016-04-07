@@ -305,6 +305,11 @@ class ImageModel(models.Model):
                     (self.image.url, func())
     admin_thumbnail.short_description = _('Thumbnail')
     admin_thumbnail.allow_tags = True
+    
+    #added by pat
+    def admin_orig_image_tag(self):
+        return '<img src="%s"/>' % self.get_absolute_url()
+    admin_orig_image_tag.allow_tags=True      
 
     def cache_path(self):
         return os.path.join(os.path.dirname(self.image.name), "cache")
@@ -542,12 +547,21 @@ class Photo(ImageModel):
 
     objects = PhotoQuerySet.as_manager()
     
+    #added by pat
     species=models.CharField(_('species'),blank=True, max_length=100)
     source=models.URLField(_('source'),blank=True,max_length=150)
     authority=models.CharField(_('authority'),blank=True,max_length=100)
     is_validated = models.BooleanField(_('validated'),
                                     default=False,
                                     )    
+    #admin_orig_image_tag=models.SlugField(default='dummy')
+    #admin_thumbnail=models.SlugField(default='dummy')
+    
+    
+    ##added by pat
+    def admin_orig_image_tag(self):
+        return '<img src="%s"/>' % self.get_absolute_url()
+    admin_orig_image_tag.allow_tags=True    
 
     class Meta:
         #ordering = ['-date_added']
@@ -603,7 +617,8 @@ class Photo(ImageModel):
                 matched = True
         return None
 
-
+    
+    
 @python_2_unicode_compatible
 class BaseEffect(models.Model):
     name = models.CharField(_('name'),

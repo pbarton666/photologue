@@ -130,25 +130,40 @@ class UploadZipForm(forms.Form):
                 logger.debug('File "{0}" is empty.'.format(filename))
                 continue
             
-            ###changed by Pat to accept file name as starting point
+            ###changed by Pat to accept file name as starting point for the snake species
+            #  And the user name for the authority
+            
             #photo_title_root = self.cleaned_data['title'] if self.cleaned_data['title'] else gallery.title
-            photo_title_root=filename
+            photo_title=filename
             
 
             # A photo might already exist with the same slug. So it's somewhat inefficient,
             # but we loop until we find a slug that's available.
-            while True:
-                photo_title = ' '.join([photo_title_root, str(count)])
-                slug = slugify(photo_title)
-                if Photo.objects.filter(slug=slug).exists():
-                    count += 1
-                    continue
-                break
+            slug=slugify(photo_title)
+            
+            #By convention (so far anyway) the name of the file will be something like:
+            #   brown_water_1.png
+            #
+            #This parses out the species name from the first bit to create something like:
+            #   brown_water
+            #
+            species = ' '.join(os.path.splitext(photo_title)[0].split('_')[:-1])
+            
+            if Photo.objects.filter(slug=slug).exists():
+                while True:
+                    photo_title = ' '.join([photo_title, str(count)])
+                    slug = slugify(photo_title)
+                    if Photo.objects.filter(slug=slug).exists():
+                        count += 1
+                        continue
+                    break
 
             photo = Photo(title=photo_title,
                           slug=slug,
                           caption=self.cleaned_data['caption'],
-                          is_public=self.cleaned_data['is_public'])
+                          is_public=self.cleaned_data['is_public'], 
+                          species=species,
+                          authority=request.user.get_username())
 
             # Basic check that we have a valid image.
             try:
