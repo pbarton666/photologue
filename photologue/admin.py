@@ -15,6 +15,10 @@ from .forms import UploadZipForm
 
 MULTISITE = getattr(settings, 'PHOTOLOGUE_MULTISITE', False)
 
+from django.contrib.admin.sites import AdminSite
+class CustomLogin(AdminSite):
+    site_header = 'You can log in with guest/guest'
+
 
 class GalleryAdminForm(forms.ModelForm):
 
