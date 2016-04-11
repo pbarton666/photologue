@@ -1,0 +1,40 @@
+#!wing
+#!version=5.0
+##################################################################
+# Wing IDE project file                                          #
+##################################################################
+[project attributes]
+debug.launch-configs = (1,
+                        {'launch-14K7MTA0ffb0wgPI': ({},
+        {'buildcmd': ('project',
+                      ('',
+                       '')),
+         'env': ('project',
+                 []),
+         'name': u'Launch manage.py',
+         'pyexec': ('project',
+                    ''),
+         'pypath': ('project',
+                    ''),
+         'pyrunargs': ('project',
+                       '-u'),
+         'runargs': 'runserver 8000',
+         'rundir': ('project',
+                    '')})})
+proj.debug-sub-processes = True
+proj.directory-list = [{'dirloc': loc('../../snakes'),
+                        'excludes': (),
+                        'filter': u'*',
+                        'include_hidden': False,
+                        'recursive': True,
+                        'watch_for_changes': True}]
+proj.file-type = 'shared'
+proj.launch-config = {loc('manage.py'): ('project',
+        (u'',
+         'launch-14K7MTA0ffb0wgPI')),
+                      loc('../../snakes/manage.py'): ('custom',
+        (u'runserver\n',
+         'launch-14K7MTA0ffb0wgPI'))}
+proj.main-file = loc('manage.py')
+testing.test-framework = {loc('../../snakes/manage.py'): ':internal djangote'\
+        'st'}

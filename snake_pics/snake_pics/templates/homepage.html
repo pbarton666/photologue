@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome to the Python-versus-Python photo database!{% endblock %}
+
+{% block content %}
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="page-header">
+			  <h1>Welcome to the Python-versus-Python photo database!</h1> 
+			</div>
+			<p>
+			  This site is designed to allow remote contributors to upload images of
+			  snakes (or snippets) and/or authenticate the identification of previously-
+			  loaded images.
+			  </p>
+			  <p>
+			  Images optimally have an alpha (transparent) background.  When that's not possible, the 
+			  background can be pure red RGB(255,0,0) - it will be filtered prior to procesing.			  
+			  </p>
+			  Feel free to use the menu bar at the top to poke around.
+		</div>
+	</div>
+{% endblock %}
+
+{%block footer%}
+<footer class="footer">
+	<br><br><br><br><br><br><br><br>
+      <div class="container">
+	<p class="text-muted">Powered by Django and Photologue</p>
+      </div>
+    </footer>
+{%endblock footer%}
