@@ -167,8 +167,6 @@ class PhotoAdmin(admin.ModelAdmin):
     fields=['image', 'title','species', 'source', 'authority', 'is_validated']
     #exclude=['slug']
 
-    
-    
     if MULTISITE:
         list_filter.append('sites')
     search_fields = ['title', 'slug', 'caption']
@@ -181,7 +179,10 @@ class PhotoAdmin(admin.ModelAdmin):
 
     #form = PhotoAdminForm
     ##TODO:  find way to unbork this hard-coded path
-    change_form_template=['/home/pat/workspace/photologue/photologue/templates/admin/photologue/photo/change_form.html',]
+    ['/home/pat/workspace/photologue/photologue/templates/admin/photologue/photo/change_form.html',]
+    #solution:  update settings.py TEMPLATES  DIRS 
+    #  (also moved to photologue/snake_pics/snake_pics/templates/ for sanity's sake).
+    change_form_template=['change_form.html',]
                           
     def change_view(self, request, object_id, form_url='', extra_context=None):
         to_return=self.changeform_view(request, object_id, form_url, extra_context)
@@ -257,7 +258,9 @@ class PhotoAdmin(admin.ModelAdmin):
         custom_urls = [
             url(r'^upload_zip/$',
                 self.admin_site.admin_view(self.upload_zip),
-                name='photologue_upload_zip')
+                name='photologue_upload_zip'),
+            
+            #/home/pat/workspace/photologue/photologue/templates/admin/photologue/photo/change_form.html'
         ]
         return custom_urls + urls
     
